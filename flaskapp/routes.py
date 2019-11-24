@@ -3,6 +3,7 @@ from flaskapp import app, db, bcrypt
 from flaskapp.forms import RegistrationForm, LoginForm
 from flaskapp.models import User
 from flask_login import login_user, current_user, logout_user, login_required
+from flask_user import roles_required
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
@@ -20,7 +21,10 @@ def register():
     if form.validate_on_submit():
         hash_pw = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         new_user = User(username = form.username.data, email = form.email.data, password = hash_pw)
+        role = Role(name='admin')
+        new_user.roles.append(role)
         db.session.add(new_user)
+
         db.session.commit()
         flash('Congrats! Your account been created successfully', 'info')
         return redirect(url_for('login'))
@@ -28,6 +32,7 @@ def register():
 
 
 @app.route("/login", methods=['GET', 'POST'])
+@roles_required('admin')     
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
