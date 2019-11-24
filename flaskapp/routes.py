@@ -10,7 +10,6 @@ def index():
 
 @app.route("/order", methods=['GET', 'POST'])
 def order():
-
     return render_template('login.html', title='Login')
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -46,3 +45,7 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+@app.route("/menu")
+def menu():
+    return render_template('menu.html', title='Menu')
